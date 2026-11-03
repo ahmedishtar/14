@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html manifest="slopkit.manifest">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PS4 [5.05] 7.00 - 13.52 FW GoldHEN Host by GamerHackRev</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<script>
+history.replaceState(null,null,'index.html');var histlength=history.length;history.go(-histlength);
+function DLProgress(e){
+    var percent=(e.total&&e.total>0)?Math.round((e.loaded/e.total)*100):0;
+    var pElem=document.getElementById("cache-percent");
+    var bElem=document.getElementById("cache-bar");
+    var mElem=document.getElementById("msgs");
+    if(pElem)pElem.innerText=percent+"%";
+    if(bElem)bElem.style.width=percent+"%";
+    if(mElem)mElem.innerText="Installing Offline Cache: "+percent+"%";
+}
+function DisplayCacheProgress(){
+    var pElem=document.getElementById("cache-percent");
+    var bElem=document.getElementById("cache-bar");
+    var mElem=document.getElementById("msgs");
+    var sElem=document.getElementById("cache-spinner");
+    var dot=document.getElementById("status-dot");
+    var badge=document.getElementById("status-badge");
+    if(pElem)pElem.innerText="100%";
+    if(bElem)bElem.style.width="100%";
+    if(sElem)sElem.className="loader-spinner complete";
+    if(dot)dot.className="status-dot success";
+    if(badge){badge.className="status-badge status-success";badge.innerText="CACHE COMPLETE";}
+    if(mElem)mElem.innerText="Cache Installed Successfully ✔";
+    setTimeout(function(){
+        if(mElem)mElem.innerText="Now Close And Re-Open Your Browser ...";
+    },1500);
+}
+window.applicationCache.addEventListener("progress",DLProgress,false);
+window.applicationCache.oncached=function(e){DisplayCacheProgress();};
+window.applicationCache.onupdateready=function(e){DisplayCacheProgress();};
+window.applicationCache.onerror=function(e){
+    var sElem=document.getElementById("cache-spinner");
+    var dot=document.getElementById("status-dot");
+    var badge=document.getElementById("status-badge");
+    var mElem=document.getElementById("msgs");
+    if(sElem)sElem.className="loader-spinner paused";
+    if(dot)dot.className="status-dot error";
+    if(badge){badge.className="status-badge status-error";badge.innerText="CACHE ERROR";}
+    if(mElem)mElem.innerText="Error Installing Cache! - Clear and Re-Open Browser ...";
+};
+</script>
+<h1>PS4 [5.05] 7.00 - 13.52 FW GoldHEN Host by GamerHackRev</h1>
+<hr>
+<div class="cache-container">
+    <div class="cache-card">
+        <div class="loader-header">
+            <span id="status-dot" class="status-dot active"></span>
+            <span id="status-badge" class="status-badge status-active">INSTALLING OFFLINE CACHE</span>
+        </div>
+        <div id="cache-spinner" class="loader-spinner"></div>
+        <div id="cache-percent" class="cache-percent">0%</div>
+        <div class="cache-progress-track">
+            <div id="cache-bar" class="cache-progress-fill" style="width: 0%;"></div>
+        </div>
+        <h2 id="msgs" class="cache-status-msg">Starting Cache Installation...</h2>
+        <div class="cache-steps">
+            <span class="cache-step-pill">1. Wait for 100%</span>
+            <span class="cache-step-arrow">➔</span>
+            <span class="cache-step-pill">2. Disconnect Internet</span>
+            <span class="cache-step-arrow">➔</span>
+            <span class="cache-step-pill">3. Run 100% Offline</span>
+        </div>
+    </div>
+</div>
+<div class="footer-credits">
+    <h1>Enhanced Version by:<a href="https://www.linkedin.com/in/shawon-taluckder" target="_blank" style="color: #00bfff;margin-left: 10px;margin-right: 10px;">Shawon Talukder</a></h1>
+    <h1>Special Thanks to:<a href="https://twitter.com/_AlAzif" style="color: #f31414;margin-left: 10px;margin-right: 10px;">@_AlAzif</a>ChendoChap<a href="https://x.com/Kameleonre_" style="color: #f31414;margin-left: 10px;margin-right: 10px;">@Kameleonre_</a>SiSTR0 Abc</h1>
+</div>
+</body>
+</html>

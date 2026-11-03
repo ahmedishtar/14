@@ -16,9 +16,16 @@
 set -e
 cd "$(dirname "$0")"
 OUT=cache.appcache
-FILES="index.html jb.html style.css launch.js meme.png
+ROOT_FILES="index.html jb.html style.css launch.js meme.png
        jb.js core.js mem.js int64.js ps4_offsets.js afterglow.js
        patchset-1400.bin patchset-1352.bin hen.bin goldhen.bin"
+
+ALL_FILES=""
+if [ -d "all" ]; then
+  ALL_FILES=$(find all -type f | sed 's|^\./||' | LC_ALL=C sort)
+fi
+
+FILES="$ROOT_FILES $ALL_FILES"
 
 {
   echo "CACHE MANIFEST"

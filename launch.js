@@ -4,11 +4,37 @@
  * in jb.js arms the chain only when the run page was reached from here. */
 
 var TARGET = {
-  hen: "log=1&afterglow=run&payload=hen.bin",
-  goldhen: "log=1&afterglow=run&mode=goldhen",
+  hen: "jb.html?log=1&afterglow=run&payload=hen.bin",
+  goldhen: "jb.html?log=1&afterglow=run&mode=goldhen",
+  legacy: "all/index.html",
 };
 
-var AUTOSTART_SECONDS = 5;
+function detectFirmware() {
+  var m = (navigator.userAgent || "").match(/PlayStation\s*4[\/ ](\d+)\.(\d+)/i);
+  if (!m) return null;
+  var major = parseInt(m[1], 10);
+  var minor = parseInt(m[2], 10);
+  return {
+    val: major * 100 + minor,
+    str: major + "." + (minor < 10 ? "0" + minor : minor)
+  };
+}
+
+var detectedFw = detectFirmware();
+var ledeEl = document.getElementById("lede");
+if (detectedFw && ledeEl) {
+  ledeEl.textContent = "Detected PS4 FW " + detectedFw.str + " \u00b7 " +
+    (detectedFw.val >= 1352 ? "Supported by Afterglow" : "Supported by Legacy Multi-FW");
+}
+
+var AUTOSTART_SECONDS = (function() {
+  try {
+    var p = new URLSearchParams(location.search);
+    if (p.get("autostart") === "1") return 2;
+  } catch (e) {}
+  return 5;
+})();
+
 var STORE_KEY = "afterglow.choice";
 
 var form = document.getElementById("pick");
@@ -54,6 +80,7 @@ function cacheNote() {
     else if (appCache.status === appCache.DOWNLOADING) text = "loading files - hold on";
     else if (appCache.status === appCache.UPDATEREADY) text = "a newer version is cached - reopen this page to use it";
     else if (appCache.status === appCache.OBSOLETE) text = "the cache was dropped - the server answers directly";
+    else if (appCache.status === appCache.IDLE) text = "cached - ready for offline";
   } catch (e) {}
   cacheEl.textContent = text;
 }
@@ -94,20 +121,24 @@ function restore() {
   try {
     saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
   } catch (e) {}
-  if (!saved) return;
 
-  if (saved.payload && TARGET[saved.payload]) {
+  var activePayload = saved && saved.payload ? saved.payload : null;
+  if (!activePayload && detectedFw) {
+    activePayload = (detectedFw.val >= 1352) ? "goldhen" : "legacy";
+  }
+
+  if (activePayload && TARGET[activePayload]) {
     var radio = form.querySelector(
-      'input[name="payload"][value="' + saved.payload + '"]',
+      'input[name="payload"][value="' + activePayload + '"]',
     );
     if (radio) radio.checked = true;
   }
-  if (typeof saved.autostart === "boolean") autoBox.checked = saved.autostart;
+  if (saved && typeof saved.autostart === "boolean") autoBox.checked = saved.autostart;
 }
 
 function picked() {
   var radio = form.querySelector('input[name="payload"]:checked');
-  return radio ? radio.value : "goldhen";
+  return radio ? radio.value : (detectedFw && detectedFw.val < 1352 ? "legacy" : "goldhen");
 }
 
 function start() {
@@ -119,7 +150,8 @@ function start() {
     cacheNote();
     return;
   }
-  location.href = "jb.html?" + TARGET[picked()];
+  var choice = picked();
+  location.href = TARGET[choice] || TARGET.goldhen;
 }
 
 function stopClock() {
